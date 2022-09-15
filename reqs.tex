@@ -34,25 +34,97 @@
 sensor to measure which feature is drawing current.
 %
 
-\textit{Vibration sensors setup:} Moteino on vibration sensors; included power supply circuit board, 6 AA batteries,
-custom amplifier, connected to piezoelectric element; total cost of \$65 per sensor setup.
+\textit{Vibration sensor node setup:} Moteino on vibration sensors; included power supply circuit board, 6 AA batteries,
+custom amplifier, connected to piezoelectric element; total cost of \$65 per sensor setup. Data is transmitted from
+the sensors to the base station using Moteino.
 %
-piezoelectric element used to convert vibrations to AC voltage.
+Power: two sets of 3 AA batteries power the sensor nodes; Power Shield with boost/buck voltage convert is used
+to interface batteries with Moteino (this board provides a voltage reading to determine when to replace batteries);
+use this to determine maintenance for when to replace batteries.
+%
+Piezoelectric element used to convert vibrations to AC voltage.
 
-\textit{Flow meter set up:} Raspberry Pi supplies power to flow meters.
+\textit{Flow meter setup:} Raspberry Pi supplies power to flow meters.
+%
+
+\textit{Base station setup:} Raspberry Pi is used at central base station.
+%
+Central base station receives all information transmitted from sensors and flow meter.
+%
+To receive signal from Moteino sensors, it has a MoteinoUSB.
+%
+Has Ethernet connected modem and custom GPIO interface.
+%
+All enclosed in a PVC junction box.
+%
+Total cost was \$205.
+%
+Power: AC power supply.
+%
+GPIO was used to connect to a Real Time Clock (RTC) for timestamping, connect to flowmeter.
+%
+Uses a Moteino as a hardware-based watchdog to perform a hard reboot of Raspberry Pi if necessary.
+%
+A significant amount of data processing/data aggregation is done at the ground station.
+%
+They send the data files daily over email.
+%
+They give two SD cards for the raspberry pis; if the case of a corrupted SD card in a pi, the backup
+card can be used as a replacement; ***the key thing here is during the install process, we have to
+calibrate the first sd card on the pi with all the sensors then make a duplicate of this sd card
+on the backup.
+
+\textit{Data aggregation:} There is a lot of information on data aggregation in section 1.2.3.
+%
+I didn't read most of it!
+%
+There's a helpful section on how they handle if the cell service is down and data cannot be transmitted.
+%
+Someone should look at their data file transmission process figure, it seems helpful.
+
+
+\textit{Considerations based on this project:}
+%
+\begin{itemize}
+%
+\item Need method to hard reboot rasberry pi in case of failure.
+\item Should reboot rasberry pi every 24 hours to prevent device system crash.
+\item Need backup SD card for each pi that is clone of primary card.
+%
+\end{itemize}
 
 
 \section{Design Goals}
+%
+\subsection{Primary Design Goals}
+%
+\textit{*minimum viable product}
+%
 \begin{itemize}
+%
 \item Easy maintenance
+%
 \item Minimal install time
-\item reliability 
+%
+\item Reliability
+%
+\end{itemize}
+%
+
+\subsection{Secondary Design Goals}
+%
+\begin{itemize}
+%
+\item Energy efficiency
+%
 \end{itemize}
 
 
 \section{Required Materials}
 \begin{enumerate}
-\item raspberry pi
+\item raspberry pi. \textit{considerations: raspberry pi's cannot perform hard reboots themselves,
+so we will need to install something for that.}
+\item Real time clock
 \end{enumerate}
 
 \subsection{Materials we cannot use}
