@@ -9,6 +9,10 @@ print(rows)
 def addData(rowEntry):
     worksheet.append_row(rowEntry)
 def updateData(columntype,columnval,rowdata):
+    full_data = worksheet.get_all_values()
+   
+    # print(full_data)
+    num_rows = len(full_data)
     index = 0
     if(columntype == 'pumpvelocity'):
         index = 0
@@ -19,15 +23,19 @@ def updateData(columntype,columnval,rowdata):
         index = 2
 
     
-    for k in range(1,worksheet.row_count+1 ):
+    for k in range(0,num_rows):
         # print((worksheet.row_values(k))[index])
-        if((worksheet.row_values(k))[index] == columnval):
+        if((full_data[k])[index] == columnval):
             # print("yes")
-            worksheet.update_cell(k,1,rowdata[0])
-            worksheet.update_cell(k,2,rowdata[1])
-            worksheet.update_cell(k,3,rowdata[2])
+            worksheet.update_cell(k+1,1,rowdata[0])
+            worksheet.update_cell(k+1,2,rowdata[1])
+            worksheet.update_cell(k+1,3,rowdata[2])
 
 def getRecord(columntype,columnval):
+    full_data = worksheet.get_all_values()
+   
+    # print(full_data)
+    num_rows = len(full_data)
     index = 0
     if(columntype == 'pumpvelocity'):
         index = 0
@@ -38,16 +46,18 @@ def getRecord(columntype,columnval):
         index = 2
 
     
-    for k in range(1,worksheet.row_count+1 ):
+    for k in range(0,num_rows):
         # print((worksheet.row_values(k))[index])
-        if((worksheet.row_values(k))[index] == columnval):
-            print(worksheet.row_values(k))
+        if((full_data[k])[index] == columnval):
+            # print("yes")
+            print(full_data[k])
             return k
-            
 
 
-addData([55,45,22])      
-updateData('timestamp','33',[11,11,11])
-getRecord('timestamp','17')
+   
+# addData([55,45,22])         
+# updateData('pressure','8',[1,7,0])
+getRecord('pumpvelocity','1')
+
 
 
