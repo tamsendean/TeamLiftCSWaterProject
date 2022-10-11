@@ -4,7 +4,8 @@ from email.mime.base import MIMEBase
 from email import encoders
 import smtplib
 from datetime import date
-
+from datetime import datetime
+import pytz
 #this script sends the data textfile as an attatchement to an email
 #this email is mailed to the teamliftirrigationtest@gmail.com email
 fromaddr = "pranavrajan568@gmail.com"
@@ -15,9 +16,10 @@ msg = MIMEMultipart()
 msg['From'] = fromaddr
 msg['To'] = toaddr
 #gets the current date as a string to signify when the data was recorded
-date_today= (date.today()).strftime("%B %d, %y")
-msg['Subject'] = "Readout Data For " + date_today
-body = "This is the Data for  " + date_today
+oregon_timezone = pytz.timezone("US/Pacific")
+time_now= (datetime.now(oregon_timezone)).strftime("%Y-%m-%d %H:%M:%S")
+msg['Subject'] = "Readout Data For " + time_now
+body = "This is the Data for  " + time_now
 
 msg.attach(MIMEText(body, 'plain'))
 
