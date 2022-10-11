@@ -26,12 +26,14 @@ last_mod_time = getLastTimeModified()
 
 #this function simulates receiving an acknowledgement of the spreadsheets file being updated
 def receiveAck():
+    global last_mod_time
     current_time = getLastTimeModified()
     print("last  ",  last_mod_time)
     print("last  ",  current_time)
 #compares the last time spreadsheet was updated, to the newly obtained value of the last updated time
 #if these two values differ, that means spreadsheet has been updated
     if(current_time != last_mod_time):
+        last_mod_time = current_time
         print("Modified at ",  current_time)
     
 
@@ -131,11 +133,12 @@ def getRecord(columntype,columnval):
 
 
 
-   
-# addData([55,45,22])         
-# updateData('pumpvelocity','44',[11,11,11])
-# getRecord('pumpvelocity','1')
-sendFile()
-# getLastTimeModified()
-# receiveAck()
-
+def start(): 
+    # addData([55,45,22])         
+    # updateData('pumpvelocity','44',[11,11,11])
+    # getRecord('pumpvelocity','1')
+    sendFile()
+    sendFile()
+    # getLastTimeModified()
+    # receiveAck()
+start()
