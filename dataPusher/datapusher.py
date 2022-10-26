@@ -21,24 +21,7 @@ def getLastTimeModified():
     headers = {'Authorization': f'Bearer {credentials.get_access_token().access_token}'}
     response = requests.get(revisions_uri, headers=headers).json()
     return response['revisions'][-1]['modifiedTime']
-#this global contsant refers to the last time the spreadhseet was updated
-last_mod_time = getLastTimeModified()
 
-#this function simulates receiving an acknowledgement of the spreadsheets file being updated
-def receiveAck():
-    global last_mod_time
-    current_time = getLastTimeModified()
-    print("last  ",  last_mod_time)
-    print("last  ",  current_time)
-#compares the last time spreadsheet was updated, to the newly obtained value of the last updated time
-#if these two values differ, that means spreadsheet has been updated
-    if(current_time != last_mod_time):
-        last_mod_time = current_time
-        print("Modified at ",  current_time)
-    
-
-
-print(rows)
 #this function adds data row to spreadsheets with given params
 def addData(rowEntry):
     worksheet.append_row(rowEntry)
@@ -46,7 +29,7 @@ def addData(rowEntry):
 
 #sends a csv file line by line to the spreadhseets file on the cloud
 def sendFile():
-
+    mod_time_before = getLastTimeModified()
     data_file = open('data.txt','r+')
     lines= data_file.readlines()
     for line in lines:
@@ -54,7 +37,12 @@ def sendFile():
         for iterator in range(len(line)):
             line[iterator] = float(line[iterator])
         addData(line)
-    receiveAck()
+    mod_time_after = getLastTimeModified()
+    print("mod time before update",mod_time_before)
+    print("mod time after update",mod_time_after)
+    if(mod_time_before != mod_time_after):
+        print("Modified at ",mod_time_after )
+
     
     
 
@@ -73,6 +61,7 @@ def sendFile():
 #column val is the value of the column to look for
 #rowdata is the new data that we are updating it to
 def updateData(columntype,columnval,rowdata):
+    mod_time_before = getLastTimeModified()
     #gets all the tabulated data is a 2D array
     full_data = worksheet.get_all_values()
    
@@ -99,7 +88,13 @@ def updateData(columntype,columnval,rowdata):
             worksheet.update_cell(k+1,1,rowdata[0])
             worksheet.update_cell(k+1,2,rowdata[1])
             worksheet.update_cell(k+1,3,rowdata[2])
-    receiveAck()
+            break
+    mod_time_after = getLastTimeModified()
+    print("mod time before update",mod_time_before)
+    print("mod time after update",mod_time_after)
+    if(mod_time_before != mod_time_after):
+        print("Modified at ",mod_time_after )
+
 
    
 
@@ -128,17 +123,20 @@ def getRecord(columntype,columnval):
         if((full_data[k])[index] == columnval):
             # print("yes")
             print(full_data[k])
-            return k
+            record = full_data[k]
+            printed_record = {"pumpvelocity":record[0],"pressure":record[1],"timestamp":record[2] }
+            print(printed_record)
+            return printed_record
 
 
 
 
 def start(): 
     # addData([55,45,22])         
-    # updateData('pumpvelocity','44',[11,11,11])
-    # getRecord('pumpvelocity','1')
-    sendFile()
-    sendFile()
+    updateData('pumpvelocity','44',[11,11,11])
+    getRecord('pumpvelocity','44')
+   
+    # sendFile()
     # getLastTimeModified()
     # receiveAck()
 start()
