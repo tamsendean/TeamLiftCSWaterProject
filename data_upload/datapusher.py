@@ -30,11 +30,11 @@ def addData(rowEntry):
 #sends a csv file line by line to the spreadhseets file on the cloud
 def sendFile():
     mod_time_before = getLastTimeModified()
-    data_file = open('data.txt','r+')
+    data_file = open('../data_agg/agg_data.txt','r+')
     lines= data_file.readlines()
     for line in lines:
         line = line.split(',')
-        for iterator in range(len(line)):
+        for iterator in range(len(line)-1):
             line[iterator] = float(line[iterator])
         addData(line)
     mod_time_after = getLastTimeModified()
@@ -133,9 +133,9 @@ def getRecord(columntype,columnval):
 
 def start(): 
     # addData([55,45,22])         
-    updateData('pumpvelocity','44',[11,11,11])
-    getRecord('pumpvelocity','44')
-   
+    #updateData('pumpvelocity','44',[11,11,11])
+    #getRecord('pumpvelocity','44')
+    sendFile()
     # sendFile()
     # getLastTimeModified()
     # receiveAck()
