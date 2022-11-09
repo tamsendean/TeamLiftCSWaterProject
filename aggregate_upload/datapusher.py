@@ -6,12 +6,12 @@ import pytz
 from oauth2client.service_account import ServiceAccountCredentials
 import requests
 #authorization
-service_account = gspread.service_account(filename = 'capstone-362722-f3745d9260b7.json' )
+service_account = gspread.service_account(filename = '/home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/capstone-362722-f3745d9260b7.json' )
 worksheet = service_account.open('TeamLiftCyberPhysical').sheet1
 rows = worksheet.row_count
 
 scope = ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/spreadsheets"]
-credentials = ServiceAccountCredentials.from_json_keyfile_name('capstone-362722-f3745d9260b7.json', scope)
+credentials = ServiceAccountCredentials.from_json_keyfile_name('/home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/capstone-362722-f3745d9260b7.json', scope)
 gc = gspread.authorize(credentials)
 wb = gc.open_by_url('https://docs.google.com/spreadsheets/d/10g0fkjjrK0k9sa_ynw3O0Stdfp3leNJiJWS0MOM_b94/edit#gid=0')
 
@@ -30,7 +30,7 @@ def addData(rowEntry):
 #sends a csv file line by line to the spreadhseets file on the cloud
 def sendFile():
     mod_time_before = getLastTimeModified()
-    data_file = open('../data_agg/agg_data.txt','r+')
+    data_file = open('/home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/agg_data.txt','r+')
     lines= data_file.readlines()
     for line in lines:
         line = line.split(',')
