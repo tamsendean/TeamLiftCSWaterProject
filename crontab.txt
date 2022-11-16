@@ -21,5 +21,4 @@
 # For more information see the manual pages of crontab(5) and cron(8)
 # 
 # m h  dom mon dow   command
-@reboot python3 /home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/read_serial.py
 * * * * * python3 /home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/datapusher.py && echo -n "" > /home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/agg_data.txt 
