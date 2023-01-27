@@ -1,17 +1,22 @@
 import gspread
 import numpy as np
+import pandas as pd
 from datetime import date
 from datetime import datetime
 import pytz
 from oauth2client.service_account import ServiceAccountCredentials
 import requests
 #authorization
-service_account = gspread.service_account(filename = '/home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/capstone-362722-f3745d9260b7.json' )
+# service_account = gspread.service_account(filename = '/home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/capstone-362722-f3745d9260b7.json' )
+service_account = gspread.service_account(filename = 'capstone-362722-f3745d9260b7.json' )
+
 worksheet = service_account.open('TeamLiftCyberPhysical').sheet1
 rows = worksheet.row_count
 
 scope = ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/spreadsheets"]
-credentials = ServiceAccountCredentials.from_json_keyfile_name('/home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/capstone-362722-f3745d9260b7.json', scope)
+# credentials = ServiceAccountCredentials.from_json_keyfile_name('/home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/capstone-362722-f3745d9260b7.json', scope)
+credentials = ServiceAccountCredentials.from_json_keyfile_name('capstone-362722-f3745d9260b7.json', scope)
+
 gc = gspread.authorize(credentials)
 wb = gc.open_by_url('https://docs.google.com/spreadsheets/d/10g0fkjjrK0k9sa_ynw3O0Stdfp3leNJiJWS0MOM_b94/edit#gid=0')
 
@@ -30,7 +35,9 @@ def addData(rowEntry):
 #sends a csv file line by line to the spreadhseets file on the cloud
 def sendFile():
     mod_time_before = getLastTimeModified()
-    data_file = open('/home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/agg_data.txt','r+')
+    # data_file = open('/home/pi/Documents/TeamLiftCSWaterProject/aggregate_upload/agg_data.txt','r+')
+    data_file = open('agg_data.txt','r+')
+
     lines= data_file.readlines()
     for line in lines:
         line = line.split(',')
@@ -42,6 +49,44 @@ def sendFile():
     print("mod time after update",mod_time_after)
     if(mod_time_before != mod_time_after):
         print("Modified at ",mod_time_after )
+def replaceNewline(str):
+    return str.replace("\n","")
+
+def getAck():
+    agg_array= np.loadtxt('agg_data.txt',delimiter=",",dtype=str)
+    print(agg_array)
+    rowsSent = np.shape(agg_array)[0]
+    colsSent = np.shape(agg_array)[1]
+
+
+    all_data = worksheet.get_all_values()
+    all_data_rows = len(all_data)
+    print("rowsSent = ",rowsSent,"colsSent = ",colsSent,"all_data_rows = ", all_data_rows)
+    remote_array = np.array( all_data[all_data_rows -rowsSent :all_data_rows:1])
+    remoteRows = np.shape(remote_array)[0]
+    remoteCols = np.shape(remote_array)[1]
+    print("remoteRows = ",remoteRows,"remoteCols = ",remoteCols)
+    if(remoteRows != rowsSent or remoteCols != colsSent):
+        print("Dimension of Data sent and data retreived do not match.\n")
+    replaceNewline_v = np.vectorize(replaceNewline)
+    remote_array[:,remoteCols -1] = replaceNewline_v(remote_array[:,remoteCols -1])
+
+    print(remote_array)
+    correctDataSent = np.array_equal(agg_array,remote_array)
+    if(correctDataSent == True):
+        print("The Correct Data was sent to the Database\n")
+    
+    if(correctDataSent == False):
+         print("The Wrong Data was Sent\n")
+         print("Attempting to send data again")
+         print(agg_array == remote_array)
+        
+    
+        
+
+
+
+
 
     
     
@@ -136,6 +181,7 @@ def start():
     #updateData('pumpvelocity','44',[11,11,11])
     #getRecord('pumpvelocity','44')
     sendFile()
+    getAck()
     # sendFile()
     # getLastTimeModified()
     # receiveAck()
