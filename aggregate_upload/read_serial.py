@@ -110,6 +110,7 @@ def UploadThread():
         os.system("python3 datapusher.py")
         
         os.system("echo -n '' > agg_data.txt")
+        os.system("python3 check_connection.py")
         time.sleep(15)
 
 with serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout=5) as ard:
