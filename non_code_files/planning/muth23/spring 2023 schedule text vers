@@ -1,6 +1,6 @@
 2/5-2/12: Specific byte format for sensor to LoRa communication
-2/12-2/19: Byte message error handling
-2/19-3/5: Voltage calculation from Arduino
+2/12-2/25: Byte message implementation and error handling
+2/25-3/5: Voltage and current test for expected behavior
 3/5-3/19: Pressure sensor test for expected behavior
 3/19-3/26: Sensor disconnectivity test
 3/26-4/9: Wire diagram
