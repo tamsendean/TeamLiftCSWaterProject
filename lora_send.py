@@ -13,6 +13,9 @@ import adafruit_ssd1306
 # Import RFM9x
 import adafruit_rfm9x
 
+#for generating message IDs
+import random
+
 import time
 import busio
 import digitalio
@@ -73,7 +76,80 @@ LED = digitalio.DigitalInOut(board.D13)
 LED.direction = digitalio.Direction.OUTPUT
 
 # create empty packet for sensor data
-#sensor_data = bytearray(8)
+sensor_data = bytearray(8)
+
+
+def sendSensorDataLocal():
+    packet = None
+    # draw a box to clear the image
+    display.fill(0)
+    display.text('RasPi LoRa', 35, 0, 1)
+   
+    #create random number for ID
+    id = random.randint(0,255)
+    id_byte = id.to_bytes(1, byteorder='big') #convert to 1 byte length byte array with big-endian format 
+   
+    if sensor_data is None:
+        display.show()
+        display.text('- Waiting for PKT -', 15, 20, 1)
+        return
+    else:
+        #append unique id to byte array. id is appended to the end. 
+        send_array = sensor_data + id_byte
+        send_array = sensor_data.extend(id_byte)
+        
+        display.fill(0)
+        rfm9x.send(send_array) #actual sending of data
+        display.text('try send data', 15, 20, 1)
+       
+    display.show()
+    time.sleep(1)
+    
+    count = 0 #count to track how long the sender has waited after sending the data and not receiving the ack.
+    
+    #wait for acknowledgement here
+    while True:
+        #if the lora has waited 5 minutes without an ack, resend the data packet
+        if count < 60:
+            #append unique id to byte array. id is appended to the end. 
+            send_array = sensor_data + id_byte
+            send_array = sensor_data.extend(id_byte)
+            
+            display.fill(0)
+            rfm9x.send(send_array) #actual sending of data
+            display.text('try send data', 15, 20, 1)
+            count = 0 # restart the count value
+            time.sleep(5)
+            
+        ackpacket = None
+
+        #check for packet rx
+        ackpacket = rfm9x.receive()
+        
+        if ackpacket is None:
+            display.show()
+            display.text('- Waiting for Ack -', 15, 20, 1)
+        else:
+            # Display the packet text and rssi
+            display.fill(0)
+            prev_packet = ackpacket #received ack packet
+            pkt_id = prev_packet[-1] #get the ID of the packet sent
+            
+            #check that the packet id matches this one
+            if pkt_id == id_byte:
+                display.text('success!', 15, 20, 1)
+                display.show()
+                time.sleep(1)
+                return
+        
+        count++
+        time.sleep(5)
+                
+    
+    time.sleep(0.1)
+    return
+
+
 
 def sendSensorData(dataa):
     packet = None
