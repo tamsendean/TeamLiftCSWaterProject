@@ -106,11 +106,21 @@ def sendSensorDataLocal():
     time.sleep(1)
     
     count = 0 #count to track how long the sender has waited after sending the data and not receiving the ack.
+    global_count = 0 #count to track how long this packet has been waiting to receive an ack, including time after retries.
     
     #wait for acknowledgement here
     while True:
+        #exit the loop if we've waited 30 minutes for the ack. it's not coming. give up.
+        if global_count >= 6:
+            display.show()
+            display.text('- Ack failure -', 15, 20, 1)
+            display.show()
+            time.sleep(1)
+            return
+            
         #if the lora has waited 5 minutes without an ack, resend the data packet
-        if count < 60:
+        if count >= 60:
+            global_count += 1
             #append unique id to byte array. id is appended to the end. 
             send_array = sensor_data + id_byte
             send_array = sensor_data.extend(id_byte)
@@ -142,8 +152,9 @@ def sendSensorDataLocal():
                 time.sleep(1)
                 return
         
-        count++
-        time.sleep(5)
+        count += 1
+        global_count += 1
+        time.sleep(5) #wait 5 seconds for an ack
                 
     
     time.sleep(0.1)
