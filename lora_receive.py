@@ -1,5 +1,5 @@
 ###Author: Jennifer Brana
-###Last modification: 12/06/2022
+###Last modification: 2/21/2023
 
 
 # Import Python System Libraries
@@ -74,6 +74,9 @@ LED.direction = digitalio.Direction.OUTPUT
 
 # create empty packet for sensor data
 packet = bytearray(8)
+
+#start_time = time.monotonic()
+#elapsed_time = time.monotonic() - start_time
 
 while True:
     packet = None
