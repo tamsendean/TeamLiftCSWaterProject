@@ -78,6 +78,8 @@ LED.direction = digitalio.Direction.OUTPUT
 # create empty packet for sensor data
 sensor_data = bytearray(8)
 
+#start_time = time.monotonic()
+#elapsed_time = time.monotonic() - start_time
 
 def sendSensorDataLocal():
     packet = None
