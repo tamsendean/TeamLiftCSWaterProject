@@ -1,5 +1,5 @@
 Author: Adrian Muth
-Version: 2/13/23
+Version: 3/14/23
 
 The data we need to transport is:
 - Error flags for each measurement (0 for no error, 1 for too low value, 2 for too high value)
