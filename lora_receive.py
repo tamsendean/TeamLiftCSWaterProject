@@ -1,5 +1,5 @@
 ###Author: Jennifer Brana
-###Last modification: 12/06/2022
+###Last modification: 2/21/2023
 
 
 # Import Python System Libraries
@@ -75,6 +75,9 @@ LED.direction = digitalio.Direction.OUTPUT
 # create empty packet for sensor data
 packet = bytearray(8)
 
+#start_time = time.monotonic()
+#elapsed_time = time.monotonic() - start_time
+
 while True:
     packet = None
     # draw a box to clear the image
@@ -93,7 +96,23 @@ while True:
         packet_text = str(prev_packet, "utf-8")
         display.text('RX: ', 0, 0, 1)
         display.text(packet_text, 25, 0, 1)
+        display.show()
         time.sleep(1)
+        
+        #create ack packet to send ack back to the sender
+        pkt_id = prev_packet[-1] #get the packet id, this is the last byte of the byte array
+        ack_msg = bytearray(7) #create byte array of all zeros
+        send_back = ack_msg + pkt_id #append the packet id of the previous packet to this one 
+        
+        #send ack back to the sender
+        if send_back is not None:
+            display.fill(0)
+            rfm9x.send(send_array) #actual sending of data
+            display.text('send ack', 15, 20, 1)
+            
+        display.show()
+        time.sleep(1)
+       
 
     #test buttons sending
     #if not btnA.value:

@@ -1,0 +1,9 @@
+2/5-2/12: Specific byte format for sensor to LoRa communication
+2/12-2/25: Byte message implementation and error handling
+2/25-3/5: Voltage and current test for expected behavior
+3/5-3/19: Pressure sensor test for expected behavior
+3/19-3/26: Sensor disconnectivity test
+3/26-4/9: Wire diagram
+
+This schedule is tentative.  A lot of the tasks can be switched around in order, as long as byte messages are handled before sensor tests 
+and sensors are received before the wire diagram is made.

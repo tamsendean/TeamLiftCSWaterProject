@@ -1,0 +1,34 @@
+Author: Adrian Muth
+Version: 3/14/23
+
+The data we need to transport is:
+- Error flags for each measurement (0 for no error, 1 for too low value, 2 for too high value)
+- Pressure (Output as 4-20 mA --> 6-400 bar)
+- Voltage (0-20 V)
+- Current (0-50 mA)
+
+Assumptions:
+- Each measurement prior to conversion to bytes will be a float rounded to the nearest thousandth.  (Ex: 16.235)
+- The error flag will be a char.
+- Out of range values will be capped at the lowest/highest acceptable value and have a corresponding error flag.
+- User will be aware of specified unit of measurement, no need to clarify in output.
+- Voltage and current will match the input limit to an Arduino Uno.  This will be revised based on actual trial results and calculations.
+
+Python has no direct float to byte conversion, so the floats will be converted to strings, then bytes.  Pressure has a maximum byte size of 7  while  voltage and current have a maximum byte size of 6.  The error flags only require a char per measurement, and therefore 3 bytes total.
+
+Sending all data within 1 byte array rather than 3 separate ones is preferable.
+
+LoRa currently receives and sends data in the form of a byte array of size 8.  Totaling the maximum byte size for each data category and adding a char for separation of categories, the byte array must be 3 + 1 + 7 + 1 + 6 + 1 + 6 = 25 in size.
+
+The general format will be b'[flags],[pressure],[voltage],[current]'.
+An example of acceptably formatted output is b'000,42.472,12,10'.
+Flag format examples:
+  '000' - No errors
+  '011' - Pressure acceptable, but voltage and current too low to read accurately
+
+Upon sending a packet, lora_send.py adds a 4 byte header, but this is automatically removed when it is received.  This therefore shouldn't effect  the amount of space.
+
+References Used:
+https://store-usa.arduino.cc/products/arduino-uno-rev3
+https://dronebotworkshop.com/dc-volt-current/
+Standard Python and Numpy documentation.
